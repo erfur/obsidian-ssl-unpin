@@ -28,7 +28,7 @@ jobs:
         ports:
           - 4444
         volumes:
-          - ${PWD}/out:/out
+          - ${{ vars.GITHUB_WORKSPACE }}/out:/out
         options: >-
           --cpus 1
           --shm-size=2gb
@@ -48,4 +48,4 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: obsidian-apk
-          path: ${PWD}/out/
+          path: ${{ vars.GITHUB_WORKSPACE }}/out/
