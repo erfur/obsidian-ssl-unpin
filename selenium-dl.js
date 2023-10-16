@@ -61,7 +61,7 @@ chromeOptions.setUserPreferences({
         });
 
         console.log('Opening the download page...');
-        await driver.get('http://206.189.111.128:443/hello.txt')
+        await driver.get('http://206.189.111.128:443/hello.zip')
             .catch((err) => {
                 if (err instanceof error.TimeoutError) {
                     console.log("Timeout reached, continuing...");
