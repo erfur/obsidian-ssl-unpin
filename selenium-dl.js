@@ -34,9 +34,12 @@ const hostDownloadFolder = '/out';
 // firefoxOptions.windowSize({width: 10, height: 10});
 
 const chromeOptions = new chrome.Options();
-chromeOptions.setPreference("download.default_directory", downloadFolder);
-chromeOptions.setPreference("download.directory_upgrade", true);
-chromeOptions.setPreference("download.prompt_for_download", false);
+chromeOptions.setUserPreferences({
+    "download.default_directory": downloadFolder,
+    "download.directory_upgrade": true,
+    "download.prompt_for_download": false,
+});
+
 const chromeCapabilities = new webdriver.Capabilities.chrome();
 chromeCapabilities.set(
   'chromeOptions', {
