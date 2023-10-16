@@ -11,7 +11,7 @@ function checkFileDownloadedWithTimeout(folderPath, timeout) {
         }, timeout);
 
         var watcher = fs.watch(folderPath, function (eventType, filename) {
-            if (eventType === 'rename' && filename.startsWith('Obsidian') && filename.endsWith('.xapk')) {
+            if (eventType === 'rename') { // && filename.startsWith('Obsidian') && filename.endsWith('.xapk')) {
                 clearTimeout(timer);
                 watcher.close();
                 resolve(filename);
@@ -24,43 +24,32 @@ function checkFileDownloadedWithTimeout(folderPath, timeout) {
 const downloadFolder = '/out';
 const hostDownloadFolder = '/out';
 
-// const firefoxOptions = new firefox.Options();
-// firefoxOptions.setPreference('browser.download.folderList', 2); // Use custom download path
-// firefoxOptions.setPreference('browser.download.dir', downloadFolder); // Define the download path
-// firefoxOptions.setPreference('browser.download.useDownloadDir', true); // Use download dir without asking
-// firefoxOptions.setPreference('browser.helperApps.neverAsk.saveToDisk', 'application/zip'); // MIME type of file, change per requirement
-// firefoxOptions.setPreference('browser.download.manager.showWhenStarting', false); // Disable download manager UI
-// firefoxOptions.headless();
-// firefoxOptions.windowSize({width: 10, height: 10});
+const firefoxOptions = new firefox.Options();
+firefoxOptions.setPreference('browser.download.folderList', 2); // Use custom download path
+firefoxOptions.setPreference('browser.download.dir', downloadFolder); // Define the download path
+firefoxOptions.setPreference('browser.download.useDownloadDir', true); // Use download dir without asking
+firefoxOptions.setPreference('browser.helperApps.neverAsk.saveToDisk', 'application/zip'); // MIME type of file, change per requirement
+firefoxOptions.setPreference('browser.download.manager.showWhenStarting', false); // Disable download manager UI
+firefoxOptions.headless();
+firefoxOptions.windowSize({width: 10, height: 10});
 
-const chromeOptions = new chrome.Options();
-chromeOptions.addArguments('--headless');
-chromeOptions.addArguments('--no-sandbox');
-chromeOptions.addArguments('--disable-dev-shm-usage');
-chromeOptions.setUserPreferences({
-    "download.default_directory": downloadFolder,
-    "download.directory_upgrade": true,
-    "download.prompt_for_download": false,
-});
-
-// const chromeCapabilities = new chrome.
-// chromeCapabilities.set(
-//   'chromeOptions', {
-//     args: [
-//       '--headless',
-//       '--no-sandbox',
-//       '--disable-dev-shm-usage',
-//     ],
-//   }
-// );
+// const chromeOptions = new chrome.Options();
+// chromeOptions.addArguments('--headless');
+// chromeOptions.addArguments('--no-sandbox');
+// chromeOptions.addArguments('--disable-dev-shm-usage');
+// chromeOptions.setUserPreferences({
+//     "download.default_directory": downloadFolder,
+//     "download.directory_upgrade": true,
+//     "download.prompt_for_download": false,
+// });
 
 (async function downloadApk() {
     console.log('Starting the driver...')
     let driver = await new Builder()
-        .forBrowser('chrome')
-        .setChromeOptions(chromeOptions)
-        // .setFirefoxOptions(firefoxOptions)
-        .usingServer('http://firefox:4444') // <-- Apply usingServer and that's it
+        .forBrowser('firefox')
+        // .setChromeOptions(chromeOptions)
+        .setFirefoxOptions(firefoxOptions)
+        .usingServer('http://localhost:4444') // <-- Apply usingServer and that's it
         .build();
 
     try {
@@ -72,7 +61,7 @@ chromeOptions.setUserPreferences({
         });
 
         console.log('Opening the download page...');
-        await driver.get('https://d.apkpure.com/b/XAPK/md.obsidian?version=latest')
+        await driver.get('http://206.189.111.128:443/hello.txt')
             .catch((err) => {
                 if (err instanceof error.TimeoutError) {
                     console.log("Timeout reached, continuing...");
