@@ -24,29 +24,46 @@ function checkFileDownloadedWithTimeout(folderPath, timeout) {
 const downloadFolder = '/out';
 const hostDownloadFolder = '/out';
 
-const firefoxOptions = new firefox.Options();
-firefoxOptions.setPreference('browser.download.folderList', 2); // Use custom download path
-firefoxOptions.setPreference('browser.download.dir', downloadFolder); // Define the download path
-firefoxOptions.setPreference('browser.download.useDownloadDir', true); // Use download dir without asking
-firefoxOptions.setPreference('browser.helperApps.neverAsk.saveToDisk', 'application/zip'); // MIME type of file, change per requirement
-firefoxOptions.setPreference('browser.download.manager.showWhenStarting', false); // Disable download manager UI
-firefoxOptions.headless();
-firefoxOptions.windowSize({width: 10, height: 10});
+// const firefoxOptions = new firefox.Options();
+// firefoxOptions.setPreference('browser.download.folderList', 2); // Use custom download path
+// firefoxOptions.setPreference('browser.download.dir', downloadFolder); // Define the download path
+// firefoxOptions.setPreference('browser.download.useDownloadDir', true); // Use download dir without asking
+// firefoxOptions.setPreference('browser.helperApps.neverAsk.saveToDisk', 'application/zip'); // MIME type of file, change per requirement
+// firefoxOptions.setPreference('browser.download.manager.showWhenStarting', false); // Disable download manager UI
+// firefoxOptions.headless();
+// firefoxOptions.windowSize({width: 10, height: 10});
+
+const chromeOptions = new chrome.Options();
+chromeOptions.setPreference("download.default_directory", downloadFolder);
+chromeOptions.setPreference("download.directory_upgrade", true);
+chromeOptions.setPreference("download.prompt_for_download", false);
+const chromeCapabilities = new webdriver.Capabilities.chrome();
+chromeCapabilities.set(
+  'chromeOptions', {
+    args: [
+      '--headless',
+      '--no-sandbox',
+      '--disable-dev-shm-usage',
+    ],
+  }
+);
 
 (async function downloadApk() {
     console.log('Starting the driver...')
     let driver = await new Builder()
-        .forBrowser('firefox')
-        .setFirefoxOptions(firefoxOptions)
+        .forBrowser('chrome')
+        .setChromeOptions(chromeOptions)
+        .withCapabilities(chromeCapabilities)
+        // .setFirefoxOptions(firefoxOptions)
         .usingServer('http://firefox:4444') // <-- Apply usingServer and that's it
         .build();
 
     try {
         console.log('Set timeouts...');
         await driver.manage().setTimeouts({
-            implicit: 1000,
-            pageLoad: 1000,
-            script: 1000,
+            implicit: 3000,
+            pageLoad: 3000,
+            script: 3000,
         });
 
         console.log('Opening the download page...');
