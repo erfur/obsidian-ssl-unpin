@@ -29,9 +29,9 @@ jobs:
           - 4444
         volumes:
           - $PWD/out:/out
-        shm-size: "2g"
         options: >-
           --cpus 1
+          --shm-size=2gb
           --health-cmd='stat /etc/passwd || exit 1'
           --health-interval=2s
 
