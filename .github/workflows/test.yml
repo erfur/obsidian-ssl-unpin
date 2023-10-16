@@ -23,8 +23,8 @@ jobs:
     services:
       firefox:
         image: selenoid/standalone-firefox:latest
-        environment:
-          - START_XVFB=false
+        env:
+          START_XVFB: false
         ports:
           - 4444
         volumes:
