@@ -22,7 +22,7 @@ jobs:
 
     services:
       firefox:
-        image: selenoid/standalone-firefox:latest
+        image: selenium/standalone-firefox:latest
         env:
           START_XVFB: false
         ports:
