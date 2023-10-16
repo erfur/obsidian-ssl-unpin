@@ -67,7 +67,7 @@ chromeOptions.addArguments(
         });
 
         console.log('Opening the download page...');
-        driver.get('https://d.apkpure.com/b/XAPK/md.obsidian?version=latest')
+        await driver.get('https://d.apkpure.com/b/XAPK/md.obsidian?version=latest')
             .catch((err) => {
                 if (err instanceof error.TimeoutError) {
                     console.log("Timeout reached, continuing...");
@@ -77,7 +77,7 @@ chromeOptions.addArguments(
             });
 
         console.log('Opened the page, waiting for download...');
-        await checkFileDownloadedWithTimeout(`${hostDownloadFolder}`, 10000).then(
+        await checkFileDownloadedWithTimeout(`${hostDownloadFolder}`, 20000).then(
             (filePath) => {
                 console.log(`File downloaded: ${filePath}`);
             },
