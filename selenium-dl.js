@@ -55,7 +55,7 @@ chromeOptions.addArguments(
     let driver = await new Builder()
         .forBrowser('firefox')
         .setFirefoxOptions(firefoxOptions)
-        .usingServer('http://localhost:4444') // <-- Apply usingServer and that's it
+        .usingServer('http://firefox:4444') // <-- Apply usingServer and that's it
         .build();
 
     try {
