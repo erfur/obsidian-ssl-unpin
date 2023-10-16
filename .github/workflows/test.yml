@@ -24,13 +24,14 @@ jobs:
       firefox:
         image: selenium/standalone-firefox:latest
         env:
-          START_XVFB: false
+          START_XVFB: "false"
         ports:
           - 4444
         volumes:
           - ./out:/out
         options: >-
-          --cpus 1
+          --cpus 2
+          --memory 4096m
           --shm-size=2gb
           --health-cmd="stat /etc/passwd || exit 1"
           --health-interval=2s
