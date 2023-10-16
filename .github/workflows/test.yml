@@ -28,11 +28,11 @@ jobs:
         ports:
           - 4444
         volumes:
-          - ${{ vars.GITHUB_WORKSPACE }}/out:/out
+          - ./out:/out
         options: >-
           --cpus 1
           --shm-size=2gb
-          --health-cmd='stat /etc/passwd || exit 1'
+          --health-cmd="stat /etc/passwd || exit 1"
           --health-interval=2s
 
     steps:
@@ -48,4 +48,4 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: obsidian-apk
-          path: ${{ vars.GITHUB_WORKSPACE }}/out/
+          path: ./out/
