@@ -48,6 +48,9 @@ jobs:
       - name: Run the download script
         run: node selenium-dl.js
 
+      - name: debug out
+        run: ls -la /out/
+
       - name: Save artifact
         uses: actions/upload-artifact@v3
         with:
