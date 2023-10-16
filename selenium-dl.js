@@ -7,7 +7,7 @@ function checkFileDownloadedWithTimeout(folderPath, timeout) {
     return new Promise(function (resolve, reject) {
         var timer = setTimeout(function () {
             watcher.close();
-            reject(new Error('File did not exists and was not created during the timeout.'));
+            reject(new Error('File does not exist and was not created during the timeout.'));
         }, timeout);
 
         var watcher = fs.watch(folderPath, function (eventType, filename) {
@@ -22,7 +22,7 @@ function checkFileDownloadedWithTimeout(folderPath, timeout) {
 
 // Set download folder
 const downloadFolder = '/out';
-const hostDownloadFolder = './out';
+const hostDownloadFolder = '/out';
 
 const firefoxOptions = new firefox.Options();
 firefoxOptions.setPreference('browser.download.folderList', 2); // Use custom download path
@@ -32,23 +32,6 @@ firefoxOptions.setPreference('browser.helperApps.neverAsk.saveToDisk', 'applicat
 firefoxOptions.setPreference('browser.download.manager.showWhenStarting', false); // Disable download manager UI
 firefoxOptions.headless();
 firefoxOptions.windowSize({width: 10, height: 10});
-
-// Configure Chrome Options
-const chromeOptions = new chrome.Options();
-chromeOptions.setUserPreferences({
-    "download.default_directory": downloadFolder,
-    "download.prompt_for_download": false,
-    "download.directory_upgrade": true,
-    "safebrowsing.enabled": true
-});
-
-chromeOptions.addArguments(
-    [
-        '--no-sandbox',
-        '--headless',
-        '--disable-dev-shm-usage',
-    ]
-);
 
 (async function downloadApk() {
     console.log('Starting the driver...')

@@ -18,7 +18,10 @@ jobs:
   pull_apk:
     runs-on: ubuntu-latest
 
-    container: node:latest
+    container: 
+      image: node:latest
+      volumes:
+        - apk-out:/out
 
     services:
       firefox:
@@ -28,7 +31,7 @@ jobs:
         ports:
           - 4444
         volumes:
-          - ./out:/out
+          - apk-out:/out
         options: >-
           --cpus 2
           --memory 4096m
