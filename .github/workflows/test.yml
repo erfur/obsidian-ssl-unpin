@@ -58,7 +58,7 @@ jobs:
         run: ls -la /out/
 
       - name: debug v2
-        run: curl http://firefox:8080/
+        run: curl http://file_server:8080/
 
       - name: Save artifact
         uses: actions/upload-artifact@v3
