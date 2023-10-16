@@ -38,6 +38,12 @@ jobs:
           --shm-size=2gb
           --health-cmd="stat /etc/passwd || exit 1"
           --health-interval=2s
+      file_server:
+        image: halverneus/static-file-server
+        ports:
+          - 8080
+        volumes:
+          - apk-out:/web
 
     steps:
       - uses: actions/checkout@v4
@@ -50,6 +56,9 @@ jobs:
 
       - name: debug out
         run: ls -la /out/
+
+      - name: debug v2
+        run: curl http://firefox:8080/
 
       - name: Save artifact
         uses: actions/upload-artifact@v3
