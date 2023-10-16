@@ -33,30 +33,35 @@ const hostDownloadFolder = '/out';
 // firefoxOptions.headless();
 // firefoxOptions.windowSize({width: 10, height: 10});
 
-const chromeOptions = new chrome.Options();
+const chromeOptions = new chrome.Options.fromCapabilities({
+    args: [
+        '--headless',
+        '--no-sandbox',
+        '--disable-dev-shm-usage',
+    ],
+});
 chromeOptions.setUserPreferences({
     "download.default_directory": downloadFolder,
     "download.directory_upgrade": true,
     "download.prompt_for_download": false,
 });
 
-const chromeCapabilities = new webdriver.Capabilities.chrome();
-chromeCapabilities.set(
-  'chromeOptions', {
-    args: [
-      '--headless',
-      '--no-sandbox',
-      '--disable-dev-shm-usage',
-    ],
-  }
-);
+// const chromeCapabilities = new chrome.
+// chromeCapabilities.set(
+//   'chromeOptions', {
+//     args: [
+//       '--headless',
+//       '--no-sandbox',
+//       '--disable-dev-shm-usage',
+//     ],
+//   }
+// );
 
 (async function downloadApk() {
     console.log('Starting the driver...')
     let driver = await new Builder()
         .forBrowser('chrome')
         .setChromeOptions(chromeOptions)
-        .withCapabilities(chromeCapabilities)
         // .setFirefoxOptions(firefoxOptions)
         .usingServer('http://firefox:4444') // <-- Apply usingServer and that's it
         .build();
