@@ -41,6 +41,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: create out dir
+        run: mkdir -p ./out
+
       - name: Run the download script
         run: node selenium-dl.js
 
