@@ -33,13 +33,10 @@ const hostDownloadFolder = '/out';
 // firefoxOptions.headless();
 // firefoxOptions.windowSize({width: 10, height: 10});
 
-const chromeOptions = new chrome.Options.fromCapabilities({
-    args: [
-        '--headless',
-        '--no-sandbox',
-        '--disable-dev-shm-usage',
-    ],
-});
+const chromeOptions = new chrome.Options();
+chromeOptions.addArguments('--headless');
+chromeOptions.addArguments('--no-sandbox');
+chromeOptions.addArguments('--disable-dev-shm-usage');
 chromeOptions.setUserPreferences({
     "download.default_directory": downloadFolder,
     "download.directory_upgrade": true,
