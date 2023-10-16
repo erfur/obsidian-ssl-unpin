@@ -45,9 +45,6 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: create out dir
-        run: mkdir -p ./out
-
       - name: Run the download script
         run: node selenium-dl.js
 
@@ -55,4 +52,4 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: obsidian-apk
-          path: ./out/
+          path: /out
