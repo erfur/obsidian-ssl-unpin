@@ -22,6 +22,3 @@ services:
       - 8080:8080
     volumes:
       - common:/web
-    healthcheck:
-      test: ["CMD-SHELL", "stat /etc/passwd || exit 1"]
-      interval: 2s
