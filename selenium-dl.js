@@ -11,7 +11,7 @@ function checkFileDownloadedWithTimeout(folderPath, timeout) {
         }, timeout);
 
         var watcher = fs.watch(folderPath, function (eventType, filename) {
-            if (eventType === 'rename') { // && filename.startsWith('Obsidian') && filename.endsWith('.xapk')) {
+            if (eventType === 'rename' && filename.startsWith('Obsidian') && filename.endsWith('.xapk')) {
                 clearTimeout(timer);
                 watcher.close();
                 resolve(filename);
