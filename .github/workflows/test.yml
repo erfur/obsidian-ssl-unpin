@@ -20,8 +20,8 @@ jobs:
 
     container: 
       image: node:latest
-      # volumes:
-      #   - apk-out:/out
+      volumes:
+        - ${{github.workspace}}/testfolder:/out
 
     services:
       firefox:
@@ -30,20 +30,14 @@ jobs:
           START_XVFB: "false"
         ports:
           - 4444
-        # volumes:
-        #   - apk-out:/out
+        volumes:
+          - ${{github.workspace}}/testfolder:/out
         options: >-
           --cpus 2
           --memory 4096m
           --shm-size=2gb
           --health-cmd="stat /etc/passwd || exit 1"
           --health-interval=2s
-      # file_server:
-      #   image: halverneus/static-file-server
-      #   ports:
-      #     - 8080
-      #   volumes:
-      #     - apk-out:/web
 
     steps:
       - uses: actions/checkout@v4
@@ -54,8 +48,8 @@ jobs:
       - name: Run the download script
         run: node selenium-dl.js
 
-      # - name: debug out
-      #   run: ls -la /out/
+      - name: debug out
+        run: ls -la /out/
 
       # - name: debug v2
       #   run: curl http://file_server:8080/
