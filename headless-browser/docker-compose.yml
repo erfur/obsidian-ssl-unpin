@@ -1,7 +1,7 @@
 version: '3'
 
-volumes:
-  common:
+# volumes:
+#   common:
 
 services:
   firefox:
@@ -11,14 +11,14 @@ services:
     ports:
       - 4444:4444
     volumes:
-      - common:/out
+      - ./out:/out
     healthcheck:
       test: ["CMD-SHELL", "stat /etc/passwd || exit 1"]
       interval: 2s
 
-  file-server:
-    image: halverneus/static-file-server:latest
-    ports:
-      - 8080:8080
-    volumes:
-      - common:/web
+  # file-server:
+  #   image: halverneus/static-file-server:latest
+  #   ports:
+  #     - 8080:8080
+  #   volumes:
+  #     - common:/web

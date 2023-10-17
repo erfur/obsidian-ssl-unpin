@@ -22,7 +22,9 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: mkdir
-        run: mkdir -p ./headless-browser/out
+        run: |
+          mkdir -p ./headless-browser/out
+          chmod 777 ./headless-browser/out
 
       - name: run docker
         run: docker compose -f headless-browser/docker-compose.yml up -d --wait
@@ -38,20 +40,20 @@ jobs:
       - name: Run the download script
         run: node selenium-dl.js ./headless-browser/out/
 
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
+      # - name: Setup tmate session
+      #   uses: mxschmitt/action-tmate@v3
 
-      - name: debug out
-        run: ls -laR ./headless-browser/
+      # - name: debug out
+      #   run: ls -laR ./headless-browser/
 
-      - name: debug docker
-        run: docker compose -f ./headless-browser/docker-compose.yml logs
+      # - name: debug docker
+      #   run: docker compose -f ./headless-browser/docker-compose.yml logs
 
-      - name: debug file server
-        run: curl http://localhost:8080/
+      # - name: debug file server
+      #   run: curl http://localhost:8080/
 
-      # - name: Save artifact
-      #   uses: actions/upload-artifact@v3
-      #   with:
-      #     name: obsidian-apk
-      #     path: /out
+      - name: Save artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: obsidian-apk
+          path: /out
