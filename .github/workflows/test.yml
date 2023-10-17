@@ -41,6 +41,9 @@ jobs:
       - name: debug out
         run: ls -laR ./headless-browser/
 
+      - name: debug docker
+        run: docker compose -f ./headless-browser/docker-compose.yml logs
+
       # - name: Save artifact
       #   uses: actions/upload-artifact@v3
       #   with:
