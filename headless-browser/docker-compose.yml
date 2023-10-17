@@ -2,7 +2,7 @@ version: '3'
 services:
   firefox:
     image: selenium/standalone-chrome:latest
-    env:
+    environment:
       START_XVFB: "false"
     ports:
       - 4444:4444
