@@ -33,10 +33,10 @@ jobs:
         run: npm ci
 
       - name: Run the download script
-        run: node selenium-dl.js ./headless-browser/out/
+        run: node selenium-dl.js ./out/
 
       - name: debug out
-        run: ls -la ./headless-browser/out/
+        run: ls -la ./out/
 
       # - name: Save artifact
       #   uses: actions/upload-artifact@v3
