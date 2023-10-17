@@ -49,7 +49,7 @@ chromeOptions.setUserPreferences({
         .forBrowser('chrome')
         .setChromeOptions(chromeOptions)
         // .setFirefoxOptions(firefoxOptions)
-        .usingServer('http://firefox:4444') // <-- Apply usingServer and that's it
+        .usingServer('http://localhost:4444') // <-- Apply usingServer and that's it
         .build();
 
     try {

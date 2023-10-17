@@ -29,7 +29,7 @@ jobs:
         env:
           START_XVFB: "false"
         ports:
-          - 4444
+          - 4444:4444
         volumes:
           - ${{github.workspace}}/testfolder:/out
         options: >-
