@@ -21,6 +21,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: mkdir
+        run: mdkir -p ./headless-browser/out
+
       - name: run docker
         run: docker compose -f headless-browser/docker-compose.yml up -d --wait
       
@@ -33,10 +36,10 @@ jobs:
         run: npm ci
 
       - name: Run the download script
-        run: node selenium-dl.js ./out/
+        run: node selenium-dl.js ./headless-browser/out/
 
       - name: debug out
-        run: ls -la ./out/
+        run: ls -laR ./
 
       # - name: Save artifact
       #   uses: actions/upload-artifact@v3
