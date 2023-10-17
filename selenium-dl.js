@@ -61,7 +61,7 @@ chromeOptions.setUserPreferences({
         });
 
         console.log('Opening the download page...');
-        await driver.get('http://206.189.111.128:443/hello.zip')
+        await driver.get('https://d.apkpure.com/b/XAPK/md.obsidian?version=latest')
             .catch((err) => {
                 if (err instanceof error.TimeoutError) {
                     console.log("Timeout reached, continuing...");
