@@ -18,10 +18,10 @@ jobs:
   pull_apk:
     runs-on: ubuntu-latest
 
-    container: 
-      image: node:latest
-      volumes:
-        - ${{github.workspace}}/testfolder:/out
+    # container: 
+    #   image: node:latest
+    #   volumes:
+    #     - ${{github.workspace}}/testfolder:/out
 
     services:
       firefox:
@@ -41,6 +41,11 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+      
+      - name: Install npm
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
 
       - name: Install dependencies
         run: npm ci
@@ -49,7 +54,7 @@ jobs:
         run: node selenium-dl.js
 
       - name: debug out
-        run: ls -la /out/
+        run: ls -la ${{github.workspace}}/testfolder
 
       # - name: debug v2
       #   run: curl http://file_server:8080/
