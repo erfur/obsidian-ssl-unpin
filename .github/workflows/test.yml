@@ -41,6 +41,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: mkdir
+        run: mkdir -p ${{github.workspace}}/testfolder
       
       - name: Install npm
         uses: actions/setup-node@v3
@@ -51,10 +54,10 @@ jobs:
         run: npm ci
 
       - name: Run the download script
-        run: node selenium-dl.js
+        run: node selenium-dl.js ${{github.workspace}}/testfolder/
 
       - name: debug out
-        run: ls -la ${{github.workspace}}/testfolder
+        run: ls -la ${{github.workspace}}/testfolder/
 
       # - name: debug v2
       #   run: curl http://file_server:8080/

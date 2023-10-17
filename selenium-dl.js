@@ -22,7 +22,7 @@ function checkFileDownloadedWithTimeout(folderPath, timeout) {
 
 // Set download folder
 const downloadFolder = '/out';
-const hostDownloadFolder = './testfolder';
+const hostDownloadFolder = process.argv.get(2);
 
 // const firefoxOptions = new firefox.Options();
 // firefoxOptions.setPreference('browser.download.folderList', 2); // Use custom download path
