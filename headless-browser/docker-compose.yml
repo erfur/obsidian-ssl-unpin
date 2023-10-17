@@ -8,9 +8,6 @@ services:
       - 4444:4444
     volumes:
       - ./out:/out
-    options: >-
-      --cpus 2
-      --memory 4096m
-      --shm-size=2gb
-      --health-cmd="stat /etc/passwd || exit 1"
-      --health-interval=2s
+    healthcheck:
+      test: ["CMD-SHELL", "stat /etc/passwd || exit 1"]
+      interval: 2s
