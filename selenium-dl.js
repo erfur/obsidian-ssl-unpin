@@ -24,31 +24,31 @@ function checkFileDownloadedWithTimeout(folderPath, timeout) {
 const downloadFolder = '/out';
 const hostDownloadFolder = process.argv[2];
 
-// const firefoxOptions = new firefox.Options();
-// firefoxOptions.setPreference('browser.download.folderList', 2); // Use custom download path
-// firefoxOptions.setPreference('browser.download.dir', downloadFolder); // Define the download path
-// firefoxOptions.setPreference('browser.download.useDownloadDir', true); // Use download dir without asking
-// firefoxOptions.setPreference('browser.helperApps.neverAsk.saveToDisk', 'application/zip'); // MIME type of file, change per requirement
-// firefoxOptions.setPreference('browser.download.manager.showWhenStarting', false); // Disable download manager UI
-// firefoxOptions.headless();
-// firefoxOptions.windowSize({width: 10, height: 10});
+const firefoxOptions = new firefox.Options();
+firefoxOptions.setPreference('browser.download.folderList', 2); // Use custom download path
+firefoxOptions.setPreference('browser.download.dir', downloadFolder); // Define the download path
+firefoxOptions.setPreference('browser.download.useDownloadDir', true); // Use download dir without asking
+firefoxOptions.setPreference('browser.helperApps.neverAsk.saveToDisk', 'application/zip'); // MIME type of file, change per requirement
+firefoxOptions.setPreference('browser.download.manager.showWhenStarting', false); // Disable download manager UI
+firefoxOptions.headless();
+firefoxOptions.windowSize({width: 10, height: 10});
 
-const chromeOptions = new chrome.Options();
-chromeOptions.addArguments('--headless');
-chromeOptions.addArguments('--no-sandbox');
-chromeOptions.addArguments('--disable-dev-shm-usage');
-chromeOptions.setUserPreferences({
-    "download.default_directory": downloadFolder,
-    "download.directory_upgrade": true,
-    "download.prompt_for_download": false,
-});
+// const chromeOptions = new chrome.Options();
+// chromeOptions.addArguments('--headless');
+// chromeOptions.addArguments('--no-sandbox');
+// chromeOptions.addArguments('--disable-dev-shm-usage');
+// chromeOptions.setUserPreferences({
+//     "download.default_directory": downloadFolder,
+//     "download.directory_upgrade": true,
+//     "download.prompt_for_download": false,
+// });
 
 (async function downloadApk() {
     console.log('Starting the driver...')
     let driver = await new Builder()
-        .forBrowser('chrome')
-        .setChromeOptions(chromeOptions)
-        // .setFirefoxOptions(firefoxOptions)
+        .forBrowser('firefox')
+        // .setChromeOptions(chromeOptions)
+        .setFirefoxOptions(firefoxOptions)
         .usingServer('http://localhost:4444') // <-- Apply usingServer and that's it
         .build();
 

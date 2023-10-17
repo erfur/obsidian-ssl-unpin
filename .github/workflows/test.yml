@@ -39,7 +39,7 @@ jobs:
         run: node selenium-dl.js ./headless-browser/out/
 
       - name: debug out
-        run: ls -laR ./
+        run: ls -laR ./headless-browser/
 
       # - name: Save artifact
       #   uses: actions/upload-artifact@v3
