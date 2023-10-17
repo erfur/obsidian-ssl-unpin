@@ -38,6 +38,9 @@ jobs:
       - name: Run the download script
         run: node selenium-dl.js ./headless-browser/out/
 
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+
       - name: debug out
         run: ls -laR ./headless-browser/
 
