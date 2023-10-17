@@ -18,32 +18,11 @@ jobs:
   pull_apk:
     runs-on: ubuntu-latest
 
-    # container: 
-    #   image: node:latest
-    #   volumes:
-    #     - ${{github.workspace}}/testfolder:/out
-
-    services:
-      firefox:
-        image: selenium/standalone-chrome:latest
-        env:
-          START_XVFB: "false"
-        ports:
-          - 4444:4444
-        volumes:
-          - ${{github.workspace}}/testfolder:/out
-        options: >-
-          --cpus 2
-          --memory 4096m
-          --shm-size=2gb
-          --health-cmd="stat /etc/passwd || exit 1"
-          --health-interval=2s
-
     steps:
       - uses: actions/checkout@v4
 
-      - name: mkdir
-        run: mkdir -p ${{github.workspace}}/testfolder
+      - name: run docker
+        run: docker compose -f headless-browser/docker-compose.yml up -d
       
       - name: Install npm
         uses: actions/setup-node@v3
@@ -54,13 +33,10 @@ jobs:
         run: npm ci
 
       - name: Run the download script
-        run: node selenium-dl.js ${{github.workspace}}/testfolder/
+        run: node selenium-dl.js ./headless-browser/out/
 
       - name: debug out
-        run: ls -la ${{github.workspace}}/testfolder/
-
-      # - name: debug v2
-      #   run: curl http://file_server:8080/
+        run: ls -la ./headless-browser/out/
 
       # - name: Save artifact
       #   uses: actions/upload-artifact@v3

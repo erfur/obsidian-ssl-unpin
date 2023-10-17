@@ -1,0 +1,16 @@
+version: '3'
+services:
+  firefox:
+    image: selenium/standalone-chrome:latest
+    env:
+      START_XVFB: "false"
+    ports:
+      - 4444:4444
+    volumes:
+      - ./out:/out
+    options: >-
+      --cpus 2
+      --memory 4096m
+      --shm-size=2gb
+      --health-cmd="stat /etc/passwd || exit 1"
+      --health-interval=2s
