@@ -15,22 +15,45 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
-  build:
-    # The type of runner that the job will run on
+  pull_apk:
     runs-on: ubuntu-latest
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo Hello, world!
-
-      # Runs a set of commands using the runners shell
-      - name: Run a multi-line script
+      - name: mkdir
         run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
+          mkdir -p ./headless-browser/out
+          chmod 777 ./headless-browser/out
+
+      - name: run docker
+        run: docker compose -f headless-browser/docker-compose.yml up -d --wait
+      
+      - name: Install npm
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run the download script
+        run: node selenium-dl.js ./headless-browser/out/
+
+      # - name: Setup tmate session
+      #   uses: mxschmitt/action-tmate@v3
+
+      # - name: debug out
+      #   run: ls -laR ./headless-browser/
+
+      # - name: debug docker
+      #   run: docker compose -f ./headless-browser/docker-compose.yml logs
+
+      # - name: debug file server
+      #   run: curl http://localhost:8080/
+
+      - name: Save artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: obsidian-apk
+          path: ./headless-browser/out/

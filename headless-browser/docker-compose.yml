@@ -1,0 +1,24 @@
+version: '3'
+
+# volumes:
+#   common:
+
+services:
+  firefox:
+    image: selenium/standalone-firefox:latest
+    environment:
+      START_XVFB: "false"
+    ports:
+      - 4444:4444
+    volumes:
+      - ./out:/out
+    healthcheck:
+      test: ["CMD-SHELL", "stat /etc/passwd || exit 1"]
+      interval: 2s
+
+  # file-server:
+  #   image: halverneus/static-file-server:latest
+  #   ports:
+  #     - 8080:8080
+  #   volumes:
+  #     - common:/web
