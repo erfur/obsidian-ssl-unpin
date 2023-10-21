@@ -52,11 +52,11 @@ jobs:
       # - name: debug file server
       #   run: curl http://localhost:8080/
 
-      - name: Save artifact
+      - name: save artifact
         uses: actions/upload-artifact@v3
         with:
           name: obsidian-apk
-          path: ./headless-browser/out/*.apk
+          path: ./headless-browser/out/
 
   unpack_apk:
     runs-on: ubuntu-latest
@@ -78,7 +78,7 @@ jobs:
       - name: unpack the apk
         run: docker run --rm -ti -v $PWD/:/workdir -w /workdir ghcr.io/ibotpeaches/apktool:latest d obsidian.apk
 
-      - name: Save artifact
+      - name: save artifact
         uses: actions/upload-artifact@v3
         with:
           name: obsidian-unpacked
