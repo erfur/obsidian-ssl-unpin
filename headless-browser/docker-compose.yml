@@ -6,6 +6,7 @@ version: '3'
 services:
   firefox:
     image: selenium/standalone-firefox:latest
+    # image: seleniarm/standalone-firefox:latest
     environment:
       START_XVFB: "false"
     ports:
