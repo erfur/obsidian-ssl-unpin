@@ -86,7 +86,7 @@ jobs:
         run: docker pull ghcr.io/ibotpeaches/apktool:snapshot
 
       - name: unpack the apk
-        run: docker run --rm -v $PWD/:/workdir -w /workdir ghcr.io/ibotpeaches/apktool:snapshot d obsidian.apk
+        run: docker run --rm -v $PWD/:/workdir -w /workdir ghcr.io/ibotpeaches/apktool:snapshot apktool d obsidian.apk
 
       - name: save artifact
         uses: actions/upload-artifact@v3
