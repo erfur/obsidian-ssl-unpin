@@ -66,7 +66,7 @@ const firefoxOptions = new firefox.Options()
                 } else {
                     console.error(`Unknown error: ${err}`);
                 }
-            });;
+            });
 
         console.log('Opened the page, waiting for download...');
         await checkFileDownloadedWithTimeout(`${hostDownloadFolder}`, 20000).then(
@@ -82,7 +82,6 @@ const firefoxOptions = new firefox.Options()
         // await driver.quit();
     } finally {
         console.log('Done.');
-        // gets stuck, dont use
-        // await driver.quit();
+        await driver.quit();
     }
 })();
