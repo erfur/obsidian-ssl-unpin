@@ -54,9 +54,9 @@ const firefoxOptions = new firefox.Options()
         // downloads dont provide a page so we need to expect a timeout
         console.log('Set timeouts...');
         await driver.manage().setTimeouts({
-            implicit: 10000,
-            pageLoad: 10000,
-            script: 10000,
+            implicit: 1000,
+            pageLoad: 1000,
+            script: 1000,
         });
 
         await driver.get(relativeUrl)
