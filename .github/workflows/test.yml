@@ -59,6 +59,7 @@ jobs:
           path: ./headless-browser/out/
 
   unpack_apk:
+    needs: pull_apk
     runs-on: ubuntu-latest
 
     steps:
