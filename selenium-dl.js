@@ -11,7 +11,7 @@ function checkFileDownloadedWithTimeout(folderPath, timeout) {
         }, timeout);
 
         var watcher = fs.watch(folderPath, function (eventType, filename) {
-            if (eventType === 'rename' && filename.startsWith('Obsidian') && filename.endsWith('.xapk')) {
+            if (eventType === 'rename' && filename.startsWith('md.obsidian') && filename.endsWith('.apk')) {
                 clearTimeout(timer);
                 watcher.close();
                 resolve(filename);
@@ -22,53 +22,51 @@ function checkFileDownloadedWithTimeout(folderPath, timeout) {
 
 // Set download folder
 const downloadFolder = '/out';
-const hostDownloadFolder = process.argv[2];
+const hostDownloadFolder = './headless-browser/out/';
 
-const firefoxOptions = new firefox.Options();
-firefoxOptions.setPreference('browser.download.folderList', 2); // Use custom download path
-firefoxOptions.setPreference('browser.download.dir', downloadFolder); // Define the download path
-firefoxOptions.setPreference('browser.download.useDownloadDir', true); // Use download dir without asking
-firefoxOptions.setPreference('browser.helperApps.neverAsk.saveToDisk', 'application/zip'); // MIME type of file, change per requirement
-firefoxOptions.setPreference('browser.download.manager.showWhenStarting', false); // Disable download manager UI
-firefoxOptions.headless();
-firefoxOptions.windowSize({width: 10, height: 10});
-
-// const chromeOptions = new chrome.Options();
-// chromeOptions.addArguments('--headless');
-// chromeOptions.addArguments('--no-sandbox');
-// chromeOptions.addArguments('--disable-dev-shm-usage');
-// chromeOptions.setUserPreferences({
-//     "download.default_directory": downloadFolder,
-//     "download.directory_upgrade": true,
-//     "download.prompt_for_download": false,
-// });
+const firefoxOptions = new firefox.Options()
+    .setPreference('browser.download.folderList', 2) // Use custom download path
+    .setPreference('browser.download.dir', downloadFolder) // Define the download path
+    .setPreference('browser.download.useDownloadDir', true) // Use download dir without asking
+    .setPreference('browser.helperApps.neverAsk.saveToDisk', 'application/zip') // MIME type of file, change per requirement
+    .setPreference('browser.download.manager.showWhenStarting', false) // Disable download manager UI
+    .headless()
+    .addExtensions(['./headless-browser/addons/uBlock0_1.52.2.firefox.signed.xpi'])
+    .windowSize({width: 1920, height: 400});
 
 (async function downloadApk() {
     console.log('Starting the driver...')
     let driver = await new Builder()
         .forBrowser('firefox')
-        // .setChromeOptions(chromeOptions)
         .setFirefoxOptions(firefoxOptions)
         .usingServer('http://localhost:4444') // <-- Apply usingServer and that's it
         .build();
 
     try {
+        console.log('Opening the download page...');
+        await driver.get('https://www.apkmirror.com/apk/dynalist-inc/obsidian/variant-{"arches_slug":["arm64-v8a","armeabi-v7a","x86","x86_64"]}/')
+
+        let button = await driver.findElement(By.className('downloadLink'));
+        await button.click();
+
+        let relativeUrl = await driver.findElement(By.className('downloadButton')).getAttribute('href');
+        
+        // downloads dont provide a page so we need to expect a timeout
         console.log('Set timeouts...');
         await driver.manage().setTimeouts({
-            implicit: 3000,
-            pageLoad: 3000,
-            script: 3000,
+            implicit: 10000,
+            pageLoad: 10000,
+            script: 10000,
         });
 
-        console.log('Opening the download page...');
-        await driver.get('https://d.apkpure.com/b/XAPK/md.obsidian?version=latest')
+        await driver.get(relativeUrl)
             .catch((err) => {
                 if (err instanceof error.TimeoutError) {
                     console.log("Timeout reached, continuing...");
                 } else {
                     console.error(`Unknown error: ${err}`);
                 }
-            });
+            });;
 
         console.log('Opened the page, waiting for download...');
         await checkFileDownloadedWithTimeout(`${hostDownloadFolder}`, 20000).then(
@@ -81,8 +79,10 @@ firefoxOptions.windowSize({width: 10, height: 10});
         );
     } catch (err) {
         console.log(`Done with error: ${err}`)
-        await driver.quit();
+        // await driver.quit();
     } finally {
-        await driver.quit();
+        console.log('Done.');
+        // gets stuck, dont use
+        // await driver.quit();
     }
 })();
