@@ -76,11 +76,14 @@ jobs:
       - name: rename apk to something simple
         run: mv *.apk obsidian.apk
 
-      - name: pull apktool docker image
-        run: docker pull ghcr.io/ibotpeaches/apktool:latest
+      - name: build apktool docker image
+        run: |
+          git clone --depth 1 --branch v2.9.0 https://github.com/iBotPeaches/Apktool.git
+          cd ./Apktool
+          docker build -t apktool:local -f docker/Dockerfile .
 
       - name: unpack the apk
-        run: docker run --rm -ti -v $PWD/:/workdir -w /workdir ghcr.io/ibotpeaches/apktool:latest d obsidian.apk
+        run: docker run --rm -ti -v $PWD/:/workdir -w /workdir apktool:local d obsidian.apk
 
       - name: save artifact
         uses: actions/upload-artifact@v3
