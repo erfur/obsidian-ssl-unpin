@@ -52,6 +52,9 @@ jobs:
       # - name: debug file server
       #   run: curl http://localhost:8080/
 
+      - name: stop docker
+        run: docker compose -f headless-browser/docker-compose.yml down
+
       - name: save artifact
         uses: actions/upload-artifact@v3
         with:
