@@ -52,8 +52,45 @@ jobs:
       # - name: debug file server
       #   run: curl http://localhost:8080/
 
-      - name: Save artifact
+      - name: stop docker
+        run: docker compose -f headless-browser/docker-compose.yml down
+
+      - name: save artifact
         uses: actions/upload-artifact@v3
         with:
           name: obsidian-apk
           path: ./headless-browser/out/
+
+  unpack_apk:
+    needs: pull_apk
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: fetch apk
+        uses: actions/download-artifact@v3
+        with:
+          name: obsidian-apk
+          
+      - name: rename apk to something simple
+        run: mv *.apk obsidian.apk
+
+      # - name: build apktool docker image
+      #   run: |
+      #     git clone --depth 1 --branch v2.9.0 https://github.com/iBotPeaches/Apktool.git
+      #     cd ./Apktool
+      #     docker build -t apktool:local -f docker/Dockerfile .
+
+      - name: pull apktool docker image
+        run: docker pull ghcr.io/ibotpeaches/apktool:snapshot
+
+      - name: unpack the apk
+        run: docker run --rm -v $PWD/:/workdir -w /workdir ghcr.io/ibotpeaches/apktool:snapshot apktool d obsidian.apk
+
+      - name: save artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: obsidian-unpacked
+          path: ./obsidian/
+

@@ -3,6 +3,10 @@ const chrome = require('selenium-webdriver/chrome');
 const firefox = require('selenium-webdriver/firefox');
 const fs = require('fs');
 
+function delay(time) {
+    return new Promise(resolve => setTimeout(resolve, time));
+} 
+
 function checkFileDownloadedWithTimeout(folderPath, timeout) {
     return new Promise(function (resolve, reject) {
         var timer = setTimeout(function () {
@@ -66,7 +70,7 @@ const firefoxOptions = new firefox.Options()
                 } else {
                     console.error(`Unknown error: ${err}`);
                 }
-            });;
+            });
 
         console.log('Opened the page, waiting for download...');
         await checkFileDownloadedWithTimeout(`${hostDownloadFolder}`, 20000).then(
@@ -82,7 +86,7 @@ const firefoxOptions = new firefox.Options()
         // await driver.quit();
     } finally {
         console.log('Done.');
-        // gets stuck, dont use
+        await delay(5000);
         // await driver.quit();
     }
 })();
