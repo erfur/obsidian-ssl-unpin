@@ -132,8 +132,11 @@ jobs:
       - name: copy gadget to library folder
         run: cp ./frida-gadget/libgadget.so ./obsidian/lib/arm64-v8a/libgadget.so
 
+      - name: zip the folder
+        run: zip -r obsidian-unpacked-hooks.zip obsidian/
+
       - name: save artifact
         uses: actions/upload-artifact@v3
         with:
           name: obsidian-unpacked-hooks
-          path: ./obsidian
+          path: ./obsidian-unpacked-hooks.zip
