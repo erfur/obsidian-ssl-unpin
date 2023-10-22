@@ -182,11 +182,11 @@ jobs:
       - name: build the apk
         run: docker run --rm -v $PWD/:/workdir -w /workdir ghcr.io/ibotpeaches/apktool:snapshot apktool b obsidian.apk
 
-      # - name: save artifact
-      #   uses: actions/upload-artifact@v3
-      #   with:
-      #     name: obsidian-hooked
-      #     path: ./obsidian/dist/*.apk
+      - name: save artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: obsidian-apk
+          path: ./obsidian/dist/obsidian.apk
 
       - name: release
         uses: softprops/action-gh-release@v1
