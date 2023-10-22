@@ -132,6 +132,22 @@ jobs:
       - name: copy gadget to library folder
         run: cp ./frida-gadget/libgadget.so ./obsidian/lib/arm64-v8a/libgadget.so
 
+      - name: Install npm
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: |
+          cd ./frida-agent
+          npm ci
+          npm run build
+
+      - name: copy agent to library folder
+        run: |
+          cp ./frida-agent/_agent.js ./obsidian/lib/arm64-v8a/libsslunpin.js.so
+          cp ./frida-agent/gadget-config.json ./obsidian/lib/arm64-v8a/libgadget.config.so
+
       - name: zip the folder
         run: zip -r obsidian-unpacked-hooks.zip obsidian/
 
