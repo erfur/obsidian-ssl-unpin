@@ -148,6 +148,9 @@ jobs:
           cp ./frida-agent/_agent.js ./obsidian/lib/arm64-v8a/libsslunpin.js.so
           cp ./frida-agent/gadget-config.json ./obsidian/lib/arm64-v8a/libgadget.config.so
 
+      - name: add constructor block
+        run: cat ./frida-agent/constructor.smali >> ./obsidian/smali/md/obsidian/MainActivity.smali
+
       - name: zip the folder
         run: zip -r obsidian-unpacked-hooks.zip obsidian/
 
