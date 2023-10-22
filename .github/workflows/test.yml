@@ -110,8 +110,8 @@ jobs:
           name: obsidian-unpacked
           path: ./
 
-      - name: debug ls
-        run: ls -la ./
+      # - name: debug ls
+      #   run: ls -la ./
 
       - name: unzip archive
         run: unzip obsidian-unpacked.zip
@@ -159,3 +159,37 @@ jobs:
         with:
           name: obsidian-unpacked-hooks
           path: ./obsidian-unpacked-hooks.zip
+
+  repackage_and_release:
+    needs: inject_hooks
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: fetch unpacked folder
+        uses: actions/download-artifact@v3
+        with:
+          name: obsidian-unpacked-hooks
+          path: ./
+
+      - name: unzip archive
+        run: unzip obsidian-unpacked-hooks.zip
+
+      - name: pull apktool docker image
+        run: docker pull ghcr.io/ibotpeaches/apktool:snapshot
+
+      - name: build the apk
+        run: docker run --rm -v $PWD/:/workdir -w /workdir ghcr.io/ibotpeaches/apktool:snapshot apktool b obsidian.apk
+
+      # - name: save artifact
+      #   uses: actions/upload-artifact@v3
+      #   with:
+      #     name: obsidian-hooked
+      #     path: ./obsidian/dist/*.apk
+
+      - name: release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: ./obsidian/dist/obsidian.apk
