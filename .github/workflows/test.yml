@@ -108,7 +108,10 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: obsidian-unpacked
-          path: ./obsidian-unpacked.zip
+          path: ./
+
+      - name: debug ls
+        run: ls -la ./
 
       - name: unzip archive
         run: unzip obsidian-unpacked.zip
