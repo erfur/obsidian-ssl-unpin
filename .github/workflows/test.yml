@@ -194,6 +194,10 @@ jobs:
           path: ./obsidian/dist/obsidian.apk
 
   sign_and_release:
+    needs: repackage
+    runs-on: ubuntu-latest
+
+    steps:
       - uses: actions/checkout@v4
 
       - name: fetch unpacked folder
