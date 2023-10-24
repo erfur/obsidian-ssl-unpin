@@ -157,13 +157,13 @@ jobs:
         run: cat ./frida-agent/constructor.smali >> ./obsidian/smali/md/obsidian/MainActivity.smali
 
       - name: zip the folder
-        run: zip -r obsidian-unpacked-hooks.zip obsidian/
+        run: zip -r obsidian-unpacked-hooked.zip obsidian/
 
       - name: save artifact
         uses: actions/upload-artifact@v3
         with:
-          name: obsidian-unpacked-hooks
-          path: ./obsidian-unpacked-hooks.zip
+          name: obsidian-unpacked-hooked
+          path: ./obsidian-unpacked-hooked.zip
 
   repackage:
     needs: inject_hooks
@@ -175,7 +175,7 @@ jobs:
       - name: fetch unpacked folder
         uses: actions/download-artifact@v3
         with:
-          name: obsidian-unpacked-hooks
+          name: obsidian-unpacked-hooked
           path: ./
 
       - name: unzip archive
@@ -190,7 +190,7 @@ jobs:
       - name: save artifact
         uses: actions/upload-artifact@v3
         with:
-          name: obsidian-apk
+          name: obsidian-apk-hooked
           path: ./obsidian/dist/obsidian.apk
 
   sign_and_release:
@@ -203,7 +203,7 @@ jobs:
       - name: fetch unpacked folder
         uses: actions/download-artifact@v3
         with:
-          name: obsidian-apk
+          name: obsidian-apk-hooked
           path: ./apk/
 
       # - name: unzip archive
