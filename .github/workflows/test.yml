@@ -179,7 +179,7 @@ jobs:
           path: ./
 
       - name: unzip archive
-        run: unzip obsidian-unpacked-hooks.zip
+        run: unzip obsidian-unpacked-hooked.zip
 
       - name: pull apktool docker image
         run: docker pull ghcr.io/ibotpeaches/apktool:snapshot
