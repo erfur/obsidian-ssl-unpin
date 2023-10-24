@@ -165,7 +165,7 @@ jobs:
           name: obsidian-unpacked-hooks
           path: ./obsidian-unpacked-hooks.zip
 
-  repackage_and_release:
+  repackage:
     needs: inject_hooks
     runs-on: ubuntu-latest
 
@@ -193,8 +193,31 @@ jobs:
           name: obsidian-apk
           path: ./obsidian/dist/obsidian.apk
 
+  sign_and_release:
+      - uses: actions/checkout@v4
+
+      - name: fetch unpacked folder
+        uses: actions/download-artifact@v3
+        with:
+          name: obsidian-apk
+          path: ./
+
+      - name: unzip archive
+        run: unzip obsidian-apk.zip
+
+      - uses: r0adkll/sign-android-release@v1
+        name: Sign app APK
+        # ID used to access action output
+        id: sign_app
+        with:
+          releaseDirectory: app/build/outputs/apk/release
+          signingKeyBase64: ${{ secrets.SIGNING_KEY }}
+          alias: ${{ secrets.ALIAS }}
+          keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
+          keyPassword: ${{ secrets.KEY_PASSWORD }}
+
       - name: release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
-          files: ./obsidian/dist/obsidian.apk
+          files: ${{ steps.sign_app.outputs.signedReleaseFile }}
