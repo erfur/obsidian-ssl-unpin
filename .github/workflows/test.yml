@@ -157,15 +157,15 @@ jobs:
         run: cat ./frida-agent/constructor.smali >> ./obsidian/smali/md/obsidian/MainActivity.smali
 
       - name: zip the folder
-        run: zip -r obsidian-unpacked-hooks.zip obsidian/
+        run: zip -r obsidian-unpacked-hooked.zip obsidian/
 
       - name: save artifact
         uses: actions/upload-artifact@v3
         with:
-          name: obsidian-unpacked-hooks
-          path: ./obsidian-unpacked-hooks.zip
+          name: obsidian-unpacked-hooked
+          path: ./obsidian-unpacked-hooked.zip
 
-  repackage_and_release:
+  repackage:
     needs: inject_hooks
     runs-on: ubuntu-latest
 
@@ -175,11 +175,11 @@ jobs:
       - name: fetch unpacked folder
         uses: actions/download-artifact@v3
         with:
-          name: obsidian-unpacked-hooks
+          name: obsidian-unpacked-hooked
           path: ./
 
       - name: unzip archive
-        run: unzip obsidian-unpacked-hooks.zip
+        run: unzip obsidian-unpacked-hooked.zip
 
       - name: pull apktool docker image
         run: docker pull ghcr.io/ibotpeaches/apktool:snapshot
@@ -190,11 +190,45 @@ jobs:
       - name: save artifact
         uses: actions/upload-artifact@v3
         with:
-          name: obsidian-apk
+          name: obsidian-apk-hooked
           path: ./obsidian/dist/obsidian.apk
+
+  sign_and_release:
+    needs: repackage
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: fetch unpacked folder
+        uses: actions/download-artifact@v3
+        with:
+          name: obsidian-apk-hooked
+          path: ./apk/
+
+      # - name: unzip archive
+      #   run: unzip obsidian-apk.zip
+
+      - uses: kevin-david/zipalign-sign-android-release@v1.1.1
+        name: Sign app APK
+        # ID used to access action output
+        id: sign_app
+        with:
+          releaseDirectory: ./apk/
+          signingKeyBase64: ${{ secrets.SIGNING_KEY }}
+          alias: ${{ secrets.ALIAS }}
+          keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
+          keyPassword: ${{ secrets.KEY_PASSWORD }}
+          zipAlign: true
+
+      - name: save artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: obsidian-apk-signed
+          path: ${{ steps.sign_app.outputs.signedReleaseFile }}
 
       - name: release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
-          files: ./obsidian/dist/obsidian.apk
+          files: ${{ steps.sign_app.outputs.signedReleaseFile }}
