@@ -67,7 +67,7 @@ jobs:
           docker build -t apktool:local -f docker/Dockerfile .
 
       - name: unpack the apk
-        run: docker run --rm -v $PWD/:/workdir -w /workdir ghcr.io/ibotpeaches/apktool:local apktool d obsidian.apk
+        run: docker run --rm -v $PWD/:/workdir -w /workdir apktool:local apktool d obsidian.apk
 
       - name: zip the folder
         run: zip -r obsidian-unpacked.zip obsidian/
