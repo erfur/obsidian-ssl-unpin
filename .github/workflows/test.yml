@@ -66,10 +66,10 @@ jobs:
       #     name: obsidian-apk
       #     path: ./headless-browser/out/
 
-      - name: fetch apk
-        uses: actions/download-artifact@v3
-        with:
-          name: obsidian-apk
+      # - name: fetch apk
+      #   uses: actions/download-artifact@v3
+      #   with:
+      #     name: obsidian-apk
 
       - name: save file name to variable
         id: file_name
