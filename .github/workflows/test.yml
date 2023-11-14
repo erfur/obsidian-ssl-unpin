@@ -45,9 +45,6 @@ jobs:
       - name: Run the download script
         run: node selenium-dl.js
 
-      # - name: Setup tmate session
-      #   uses: mxschmitt/action-tmate@v3
-
       - name: stop docker
         run: docker compose -f headless-browser/docker-compose.yml down
 
@@ -65,6 +62,9 @@ jobs:
           git clone --depth 1 --branch v2.9.0 https://github.com/iBotPeaches/Apktool.git
           cd ./Apktool
           docker build -t apktool:local -f docker/Dockerfile .
+
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
 
       - name: unpack the apk
         run: docker run --rm -v $PWD/:/workdir --user 1000:1000 -w /workdir apktool:local apktool d obsidian.apk
@@ -117,7 +117,7 @@ jobs:
           path: ./obsidian-unpacked-hooked.zip
 
       - name: build the apk
-        run: docker run --rm -v $PWD/:/workdir --user 1000:1000 -w /workdir apktool:local apktool b ./obsidian
+        run: docker run --rm -v $PWD/:/workdir -w /workdir apktool:local apktool b ./obsidian
 
       - name: save artifact
         uses: actions/upload-artifact@v3
