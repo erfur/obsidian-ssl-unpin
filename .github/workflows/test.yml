@@ -67,7 +67,7 @@ jobs:
           docker build -t apktool:local -f docker/Dockerfile .
 
       - name: unpack the apk
-        run: docker run --rm -v $PWD/:/workdir -w /workdir apktool:local apktool d obsidian.apk
+        run: docker run --rm -v $PWD/:/workdir --user 1000:1000 -w /workdir apktool:local apktool d obsidian.apk
 
       - name: zip the folder
         run: zip -r obsidian-unpacked.zip obsidian/
@@ -116,11 +116,8 @@ jobs:
           name: obsidian-unpacked-hooked
           path: ./obsidian-unpacked-hooked.zip
 
-      - name: pull apktool docker image
-        run: docker pull ghcr.io/ibotpeaches/apktool:snapshot
-
       - name: build the apk
-        run: docker run --rm -v $PWD/:/workdir -w /workdir ghcr.io/ibotpeaches/apktool:snapshot apktool b ./obsidian
+        run: docker run --rm -v $PWD/:/workdir --user 1000:1000 -w /workdir apktool:local apktool b ./obsidian
 
       - name: save artifact
         uses: actions/upload-artifact@v3
