@@ -61,7 +61,7 @@ jobs:
         run: mv ./headless-browser/out/*.apk obsidian.apk
 
       - name: pull apktool docker image
-        run: docker pull ghcr.io/ibotpeaches/apktool:snapshot
+        run: docker pull ghcr.io/ibotpeaches/apktool
 
       - name: unpack the apk
         run: docker run --rm -v $PWD/:/workdir -w /workdir ghcr.io/ibotpeaches/apktool:snapshot apktool d obsidian.apk
