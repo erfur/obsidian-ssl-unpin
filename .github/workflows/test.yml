@@ -20,7 +20,7 @@ permissions:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  pull_apk:
+  modify_and_release_apk:
     runs-on: ubuntu-latest
 
     steps:
@@ -60,23 +60,22 @@ jobs:
       - name: stop docker
         run: docker compose -f headless-browser/docker-compose.yml down
 
-      - name: save artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: obsidian-apk
-          path: ./headless-browser/out/
-
-  unpack_apk:
-    needs: pull_apk
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
+      # - name: save artifact
+      #   uses: actions/upload-artifact@v3
+      #   with:
+      #     name: obsidian-apk
+      #     path: ./headless-browser/out/
 
       - name: fetch apk
         uses: actions/download-artifact@v3
         with:
           name: obsidian-apk
+
+      - name: save file name to variable
+        id: file_name
+        run: |
+          APK_NAME=$(ls -1 *.apk)
+          echo "APK_NAME=$APK_NAME" >> $GITHUB_ENV
           
       - name: rename apk to something simple
         run: mv *.apk obsidian.apk
@@ -96,30 +95,14 @@ jobs:
       - name: zip the folder
         run: zip -r obsidian-unpacked.zip obsidian/
 
-      - name: save artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: obsidian-unpacked
-          path: ./obsidian-unpacked.zip
-
-  inject_hooks:
-    needs: unpack_apk
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: fetch unpacked folder
-        uses: actions/download-artifact@v3
-        with:
-          name: obsidian-unpacked
-          path: ./
+      # - name: save artifact
+      #   uses: actions/upload-artifact@v3
+      #   with:
+      #     name: obsidian-unpacked
+      #     path: ./obsidian-unpacked.zip
 
       # - name: debug ls
       #   run: ls -la ./
-
-      - name: unzip archive
-        run: unzip obsidian-unpacked.zip
 
       - name: download frida gadget
         uses: robinraju/release-downloader@v1.8
@@ -165,22 +148,6 @@ jobs:
           name: obsidian-unpacked-hooked
           path: ./obsidian-unpacked-hooked.zip
 
-  repackage:
-    needs: inject_hooks
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: fetch unpacked folder
-        uses: actions/download-artifact@v3
-        with:
-          name: obsidian-unpacked-hooked
-          path: ./
-
-      - name: unzip archive
-        run: unzip obsidian-unpacked-hooked.zip
-
       - name: pull apktool docker image
         run: docker pull ghcr.io/ibotpeaches/apktool:snapshot
 
@@ -192,19 +159,6 @@ jobs:
         with:
           name: obsidian-apk-hooked
           path: ./obsidian/dist/obsidian.apk
-
-  sign_and_release:
-    needs: repackage
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: fetch unpacked folder
-        uses: actions/download-artifact@v3
-        with:
-          name: obsidian-apk-hooked
-          path: ./apk/
 
       # - name: unzip archive
       #   run: unzip obsidian-apk.zip
@@ -231,4 +185,6 @@ jobs:
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
-          files: ${{ steps.sign_app.outputs.signedReleaseFile }}
+          files: |
+            ./obsidian.apk
+            ${{ steps.sign_app.outputs.signedReleaseFile }}
