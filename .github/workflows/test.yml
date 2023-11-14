@@ -63,11 +63,13 @@ jobs:
           cd ./Apktool
           docker build -t apktool:local -f docker/Dockerfile .
 
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
+      # - name: Setup tmate session
+      #   uses: mxschmitt/action-tmate@v3
 
       - name: unpack the apk
-        run: docker run --rm -v $PWD/:/workdir --user 1000:1000 -w /workdir apktool:local apktool d obsidian.apk
+        run: |
+          docker run --rm -v $PWD/:/workdir -w /workdir apktool:local apktool d obsidian.apk
+          sudo chown -R runner ./obsidian
 
       - name: zip the folder
         run: zip -r obsidian-unpacked.zip obsidian/
@@ -117,7 +119,9 @@ jobs:
           path: ./obsidian-unpacked-hooked.zip
 
       - name: build the apk
-        run: docker run --rm -v $PWD/:/workdir -w /workdir apktool:local apktool b ./obsidian
+        run: |
+          docker run --rm -v $PWD/:/workdir -w /workdir apktool:local apktool b ./obsidian
+          sudo chown -R runner ./obsidian/dist
 
       - name: save artifact
         uses: actions/upload-artifact@v3
