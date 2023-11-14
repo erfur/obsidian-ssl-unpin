@@ -54,8 +54,8 @@ jobs:
       - name: save file name to variable
         id: file_name
         run: |
-          APK_NAME=$(basename ./headless-browser/out/*.apk)
-          echo "APK_NAME=$APK_NAME" >> $GITHUB_ENV
+          TARGET_APK_NAME=$(basename ./headless-browser/out/*.apk)
+          echo "TARGET_APK_NAME=$TARGET_APK_NAME" >> $GITHUB_ENV
           
       - name: rename apk to something simple
         run: mv ./headless-browser/out/*.apk obsidian.apk
