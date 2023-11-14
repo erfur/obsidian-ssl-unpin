@@ -60,11 +60,14 @@ jobs:
       - name: rename apk to something simple
         run: mv ./headless-browser/out/*.apk obsidian.apk
 
-      - name: pull apktool docker image
-        run: docker pull ghcr.io/ibotpeaches/apktool
+      - name: build apktool docker image
+        run: |
+          git clone --depth 1 --branch v2.9.0 https://github.com/iBotPeaches/Apktool.git
+          cd ./Apktool
+          docker build -t apktool:local -f docker/Dockerfile .
 
       - name: unpack the apk
-        run: docker run --rm -v $PWD/:/workdir -w /workdir ghcr.io/ibotpeaches/apktool:snapshot apktool d obsidian.apk
+        run: docker run --rm -v $PWD/:/workdir -w /workdir ghcr.io/ibotpeaches/apktool:local apktool d obsidian.apk
 
       - name: zip the folder
         run: zip -r obsidian-unpacked.zip obsidian/
