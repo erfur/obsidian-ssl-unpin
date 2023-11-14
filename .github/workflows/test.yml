@@ -48,43 +48,17 @@ jobs:
       # - name: Setup tmate session
       #   uses: mxschmitt/action-tmate@v3
 
-      # - name: debug out
-      #   run: ls -laR ./headless-browser/
-
-      # - name: debug docker
-      #   run: docker compose -f ./headless-browser/docker-compose.yml logs
-
-      # - name: debug file server
-      #   run: curl http://localhost:8080/
-
       - name: stop docker
         run: docker compose -f headless-browser/docker-compose.yml down
-
-      # - name: save artifact
-      #   uses: actions/upload-artifact@v3
-      #   with:
-      #     name: obsidian-apk
-      #     path: ./headless-browser/out/
-
-      # - name: fetch apk
-      #   uses: actions/download-artifact@v3
-      #   with:
-      #     name: obsidian-apk
 
       - name: save file name to variable
         id: file_name
         run: |
-          APK_NAME=$(ls -1 *.apk)
+          APK_NAME=$(basename ./headless-browser/out/*.apk)
           echo "APK_NAME=$APK_NAME" >> $GITHUB_ENV
           
       - name: rename apk to something simple
-        run: mv *.apk obsidian.apk
-
-      # - name: build apktool docker image
-      #   run: |
-      #     git clone --depth 1 --branch v2.9.0 https://github.com/iBotPeaches/Apktool.git
-      #     cd ./Apktool
-      #     docker build -t apktool:local -f docker/Dockerfile .
+        run: mv ./headless-browser/out/*.apk obsidian.apk
 
       - name: pull apktool docker image
         run: docker pull ghcr.io/ibotpeaches/apktool:snapshot
@@ -94,15 +68,6 @@ jobs:
 
       - name: zip the folder
         run: zip -r obsidian-unpacked.zip obsidian/
-
-      # - name: save artifact
-      #   uses: actions/upload-artifact@v3
-      #   with:
-      #     name: obsidian-unpacked
-      #     path: ./obsidian-unpacked.zip
-
-      # - name: debug ls
-      #   run: ls -la ./
 
       - name: download frida gadget
         uses: robinraju/release-downloader@v1.8
@@ -159,9 +124,6 @@ jobs:
         with:
           name: obsidian-apk-hooked
           path: ./obsidian/dist/obsidian.apk
-
-      # - name: unzip archive
-      #   run: unzip obsidian-apk.zip
 
       - uses: kevin-david/zipalign-sign-android-release@v1.1.1
         name: Sign app APK
