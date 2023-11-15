@@ -149,20 +149,24 @@ jobs:
 
       - name: rename files
         run: |
-          mv "${{ steps.sign_app.outputs.signedReleaseFile }}" "${{ env.TARGET_APK_NAME }}-hooked.apk"
+          mv "${{ steps.sign_app.outputs.signedReleaseFile }}" "${{ env.TARGET_APK_NAME }}-hooked-signed.apk"
           mv obsidian.apk "${{ env.TARGET_APK_NAME }}-hooked-unsigned.apk"
 
-      - name: save hashes
+      - name: save hashes in env
         run: |
-          echo "SHA256 hashes:" > hashes.txt
-          sha256sum "${{ env.TARGET_APK_NAME }}-hooked.apk" >> hashes.txt
-          sha256sum "${{ env.TARGET_APK_NAME }}-hooked-unsigned.apk" >> hashes.txt
+          sha256sum "${{ env.TARGET_APK_NAME }}-hooked-unsigned.apk" > hashes.txt
+          sha256sum "${{ env.TARGET_APK_NAME }}-hooked-signed.apk" >> hashes.txt
+          echo "HASHES=$(cat hashes.txt)" >> $GITHUB_ENV
 
       - name: release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
-          body_path: hashes.txt
+          body: |
+            ```
+            SHA256 hashes:
+            ${{ env.HASHES }}
+            ```
           files: |
-            "${{ env.TARGET_APK_NAME }}-hooked-unsigned.apk"
-            "${{ env.TARGET_APK_NAME }}-hooked.apk"
+            ${{ env.TARGET_APK_NAME }}-hooked-unsigned.apk
+            ${{ env.TARGET_APK_NAME }}-hooked-signed.apk
