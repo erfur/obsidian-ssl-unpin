@@ -139,11 +139,14 @@ jobs:
           sha256sum "${{ env.TARGET_APK_NAME }}-hooked-signed.apk" >> hashes.txt
           echo '```' >> hashes.txt
 
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+
       - name: release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
           body_path: hashes.txt
           files: |
-            ${{ env.TARGET_APK_NAME }}-hooked-unsigned.apk
-            ${{ env.TARGET_APK_NAME }}-hooked-signed.apk
+            ./${{ env.TARGET_APK_NAME }}-hooked-unsigned.apk
+            ./${{ env.TARGET_APK_NAME }}-hooked-signed.apk
