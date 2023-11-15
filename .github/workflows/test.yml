@@ -152,10 +152,17 @@ jobs:
           mv "${{ steps.sign_app.outputs.signedReleaseFile }}" "${{ env.TARGET_APK_NAME }}-hooked.apk"
           mv obsidian.apk "${{ env.TARGET_APK_NAME }}-hooked-unsigned.apk"
 
+      - name: save hashes
+        run: |
+          echo "SHA256 hashes:" > hashes.txt
+          sha256sum "${{ env.TARGET_APK_NAME }}-hooked.apk" >> hashes.txt
+          sha256sum "${{ env.TARGET_APK_NAME }}-hooked-unsigned.apk" >> hashes.txt
+
       - name: release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
+          body_path: hashes.txt
           files: |
             "${{ env.TARGET_APK_NAME }}-hooked-unsigned.apk"
             "${{ env.TARGET_APK_NAME }}-hooked.apk"
