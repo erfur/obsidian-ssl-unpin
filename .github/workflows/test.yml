@@ -154,19 +154,17 @@ jobs:
 
       - name: save hashes in env
         run: |
-          sha256sum "${{ env.TARGET_APK_NAME }}-hooked-unsigned.apk" > hashes.txt
+          echo "```" > hashes.txt
+          echo "SHA256 hashes:" >> hashes.txt
+          sha256sum "${{ env.TARGET_APK_NAME }}-hooked-unsigned.apk" >> hashes.txt
           sha256sum "${{ env.TARGET_APK_NAME }}-hooked-signed.apk" >> hashes.txt
-          echo "HASHES=$(cat hashes.txt)" >> $GITHUB_ENV
+          echo "```" >> hashes.txt
 
       - name: release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
-          body: |
-            ```
-            SHA256 hashes:
-            ${{ env.HASHES }}
-            ```
+          body_path: hashes.txt
           files: |
             ${{ env.TARGET_APK_NAME }}-hooked-unsigned.apk
             ${{ env.TARGET_APK_NAME }}-hooked-signed.apk
