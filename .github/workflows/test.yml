@@ -133,6 +133,7 @@ jobs:
           mv ./obsidian/dist/obsidian.apk "./${{ env.NEW_APK_NAME }}-hooked-unsigned.apk"
           mv "${{ steps.sign_app.outputs.signedReleaseFile }}" "${{ env.NEW_APK_NAME }}-hooked-signed.apk"
 
+
       - name: save hashes in env
         run: |
           echo '```' > hashes.txt
