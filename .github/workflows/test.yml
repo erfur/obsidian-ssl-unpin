@@ -52,7 +52,8 @@ jobs:
         id: file_name
         run: |
           TARGET_APK_NAME=$(basename -s .apk ./headless-browser/out/*.apk)
-          echo "TARGET_APK_NAME=$TARGET_APK_NAME" >> $GITHUB_ENV
+          NEW_APK_NAME=`echo $TARGET_APK_NAME | awk -F'_' '{print $1 "-" $2}'`
+          echo "NEW_APK_NAME=$NEW_APK_NAME" >> $GITHUB_ENV
           
       - name: rename apk to something simple
         run: mv ./headless-browser/out/*.apk obsidian.apk
@@ -70,9 +71,6 @@ jobs:
         run: |
           docker run --rm -v $PWD/:/workdir -w /workdir apktool:local apktool d obsidian.apk
           sudo chown -R runner ./obsidian
-
-      - name: zip the folder
-        run: zip -r obsidian-unpacked.zip obsidian/
 
       - name: download frida gadget
         uses: robinraju/release-downloader@v1.8
@@ -112,22 +110,10 @@ jobs:
       - name: zip the folder
         run: zip -r obsidian-unpacked-hooked.zip obsidian/
 
-      - name: save artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: obsidian-unpacked-hooked
-          path: ./obsidian-unpacked-hooked.zip
-
       - name: build the apk
         run: |
           docker run --rm -v $PWD/:/workdir -w /workdir apktool:local apktool b ./obsidian
           sudo chown -R runner ./obsidian/dist
-
-      - name: save artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: obsidian-apk-hooked
-          path: ./obsidian/dist/obsidian.apk
 
       - uses: kevin-david/zipalign-sign-android-release@v1.1.1
         name: Sign app APK
@@ -141,22 +127,18 @@ jobs:
           keyPassword: ${{ secrets.KEY_PASSWORD }}
           zipAlign: true
 
-      - name: save artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: obsidian-apk-signed
-          path: ${{ steps.sign_app.outputs.signedReleaseFile }}
-
       - name: rename files
         run: |
-          mv "${{ steps.sign_app.outputs.signedReleaseFile }}" "${{ env.TARGET_APK_NAME }}-hooked.apk"
-          mv obsidian.apk "${{ env.TARGET_APK_NAME }}-hooked-unsigned.apk"
+          mv '${{ steps.sign_app.outputs.signedReleaseFile }}' '${{ env.NEW_APK_NAME }}-hooked-signed.apk'
+          mv obsidian.apk '${{ env.NEW_APK_NAME }}-hooked-unsigned.apk'
 
-      - name: save hashes
+      - name: save hashes in env
         run: |
-          echo "SHA256 hashes:" > hashes.txt
-          sha256sum "${{ env.TARGET_APK_NAME }}-hooked.apk" >> hashes.txt
-          sha256sum "${{ env.TARGET_APK_NAME }}-hooked-unsigned.apk" >> hashes.txt
+          echo '```' > hashes.txt
+          echo "SHA256 hashes:" >> hashes.txt
+          sha256sum "${{ env.NEW_APK_NAME }}-hooked-unsigned.apk" >> hashes.txt
+          sha256sum "${{ env.NEW_APK_NAME }}-hooked-signed.apk" >> hashes.txt
+          echo '```' >> hashes.txt
 
       - name: release
         uses: softprops/action-gh-release@v1
@@ -164,5 +146,5 @@ jobs:
         with:
           body_path: hashes.txt
           files: |
-            "${{ env.TARGET_APK_NAME }}-hooked-unsigned.apk"
-            "${{ env.TARGET_APK_NAME }}-hooked.apk"
+            ./${{ env.NEW_APK_NAME }}-hooked-unsigned.apk
+            ./${{ env.NEW_APK_NAME }}-hooked-signed.apk
