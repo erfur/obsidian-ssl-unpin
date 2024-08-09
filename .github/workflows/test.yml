@@ -58,19 +58,18 @@ jobs:
       - name: rename apk to something simple
         run: mv ./headless-browser/out/*.apk obsidian.apk
 
-      - name: build apktool docker image
+      - name: download apktool
         run: |
-          git clone --depth 1 --branch v2.9.0 https://github.com/iBotPeaches/Apktool.git
-          cd ./Apktool
-          docker build -t apktool:local -f docker/Dockerfile .
+          wget https://bitbucket.org/iBotPeaches/apktool/downloads/apktool_2.9.3.jar -O apktool.jar
+          wget https://raw.githubusercontent.com/iBotPeaches/Apktool/master/scripts/linux/apktool -O apktool
+          chmod +x apktool
 
       # - name: Setup tmate session
       #   uses: mxschmitt/action-tmate@v3
 
       - name: unpack the apk
         run: |
-          docker run --rm -v $PWD/:/workdir -w /workdir apktool:local apktool d obsidian.apk
-          sudo chown -R runner ./obsidian
+          ./apktool d obsidian.apk
 
       - name: download frida gadget
         uses: robinraju/release-downloader@v1.8
@@ -112,8 +111,7 @@ jobs:
 
       - name: build the apk
         run: |
-          docker run --rm -v $PWD/:/workdir -w /workdir apktool:local apktool b ./obsidian
-          sudo chown -R runner ./obsidian/dist
+          ./apktool b ./obsidian
 
       - uses: kevin-david/zipalign-sign-android-release@v1.1.1
         name: Sign app APK
