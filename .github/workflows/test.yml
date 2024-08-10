@@ -43,7 +43,18 @@ jobs:
         run: npm ci
 
       - name: Run the download script
-        run: node selenium-dl.js
+        # run the script, if it fails then upload the screenshot to the artifacts and fail the build
+        run: node selenium-dl.js || echo "SCRAPE_RESULT=$?" >> $GITHUB_ENV
+
+      - name: upload screenshot
+        if: ${{ env.SCRAPE_RESULT }} != 0
+        uses: actions/upload-artifact@v2
+        with:
+          path: ./ss.png
+
+      - name: fail if download failed
+        if: ${{ env.SCRAPE_RESULT }} != 0
+        run: false
 
       - name: stop docker
         run: docker compose -f headless-browser/docker-compose.yml down

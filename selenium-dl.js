@@ -5,7 +5,7 @@ const fs = require('fs');
 
 function delay(time) {
     return new Promise(resolve => setTimeout(resolve, time));
-} 
+}
 
 function checkFileDownloadedWithTimeout(folderPath, timeout) {
     return new Promise(function (resolve, reject) {
@@ -36,7 +36,7 @@ const firefoxOptions = new firefox.Options()
     .setPreference('browser.download.manager.showWhenStarting', false) // Disable download manager UI
     .headless()
     .addExtensions(['./headless-browser/addons/uBlock0_1.52.2.firefox.signed.xpi'])
-    .windowSize({width: 1920, height: 400});
+    .windowSize({ width: 1920, height: 1080 });
 
 (async function downloadApk() {
     console.log('Starting the driver...')
@@ -54,7 +54,7 @@ const firefoxOptions = new firefox.Options()
         await button.click();
 
         let relativeUrl = await driver.findElement(By.className('downloadButton')).getAttribute('href');
-        
+
         // downloads dont provide a page so we need to expect a timeout
         console.log('Set timeouts...');
         await driver.manage().setTimeouts({
@@ -82,7 +82,13 @@ const firefoxOptions = new firefox.Options()
             }
         );
     } catch (err) {
-        console.log(`Done with error: ${err}`)
+        console.log(`Done with error: ${err}, saving screenshot to ss.png`);
+        // take screenshot and save to file
+        await driver.takeScreenshot().then((img) => {
+            fs.writeFileSync('ss.png', img, 'base64')
+        })
+        // exit with code 1
+        process.exit(1);
         // await driver.quit();
     } finally {
         console.log('Done.');
