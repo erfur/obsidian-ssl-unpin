@@ -48,11 +48,13 @@ jobs:
       - name: stop docker
         run: docker compose -f headless-browser/docker-compose.yml down
 
-      - name: save file name to variable
+      - name: parse and save file name
         id: file_name
         run: |
-          TARGET_APK_NAME=$(basename -s .apk ./headless-browser/out/*.apk)
-          NEW_APK_NAME=`echo $TARGET_APK_NAME | awk -F'_' '{print $1 "-" $2}'`
+          APK_NAME=$(basename -s .apk ./headless-browser/out/*.apk)
+          echo "APK_NAME=$APK_NAME" >> $GITHUB_ENV
+          echo "APK_VERSION=$(echo $APK_NAME | awk -F'_' '{print $2}')" >> $GITHUB_ENV
+          NEW_APK_NAME=`echo $APK_NAME | awk -F'_' '{print $1 "-" $2}'`
           echo "NEW_APK_NAME=$NEW_APK_NAME" >> $GITHUB_ENV
           
       - name: rename apk to something simple
