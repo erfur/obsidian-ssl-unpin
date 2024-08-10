@@ -144,9 +144,10 @@ jobs:
           echo '```' >> hashes.txt
 
       - name: release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
         with:
+          name: ${{ env.APK_VERSION }}
           body_path: hashes.txt
           files: |
             ./${{ env.NEW_APK_NAME }}.apk
