@@ -129,7 +129,7 @@ jobs:
         run: cat ./frida-agent/constructor.smali >> ./obsidian/smali/md/obsidian/MainActivity.smali
 
       - name: zip the folder
-        run: zip -r obsidian-unpacked-hooked.zip obsidian/
+        run: zip -qr obsidian-unpacked-hooked.zip obsidian/
 
       - name: build the apk
         run: |
@@ -165,9 +165,9 @@ jobs:
 
       - name: release
         uses: softprops/action-gh-release@v2
-        if: ${{ env.SHOULD_RELEASE == 1 }} 
+        if: ${{ env.SHOULD_RELEASE == 1 }}
         with:
-          tag: ${{ env.APK_VERSION }}
+          tag_name: 'latest'
           name: ${{ env.APK_VERSION }}
           body_path: hashes.txt
           files: |
