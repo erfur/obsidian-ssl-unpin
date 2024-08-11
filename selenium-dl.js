@@ -2,6 +2,7 @@ const { Capabilities, Builder, By, Key, until, error } = require('selenium-webdr
 const chrome = require('selenium-webdriver/chrome');
 const firefox = require('selenium-webdriver/firefox');
 const fs = require('fs');
+let rssParser = require('rss-parser');
 
 function delay(time) {
     return new Promise(resolve => setTimeout(resolve, time));
@@ -11,10 +12,17 @@ function checkFileDownloadedWithTimeout(folderPath, timeout) {
     return new Promise(function (resolve, reject) {
         var timer = setTimeout(function () {
             watcher.close();
+            // check for the existence of the file one last time
+            fs.readdirSync(folderPath).forEach(file => {
+                if (file.startsWith('md.obsidian') && file.endsWith('.apk')) {
+                    resolve(file);
+                }
+            });
             reject(new Error('File does not exist and was not created during the timeout.'));
         }, timeout);
 
         var watcher = fs.watch(folderPath, function (eventType, filename) {
+            console.log(`Event: ${eventType}, Filename: ${filename}`);
             if (eventType === 'rename' && filename.startsWith('md.obsidian') && filename.endsWith('.apk')) {
                 clearTimeout(timer);
                 watcher.close();
@@ -22,6 +30,20 @@ function checkFileDownloadedWithTimeout(folderPath, timeout) {
             }
         });
     });
+}
+
+async function fetchLatestDownloadLink() {
+    let parser = new rssParser();
+    let feedUrl = 'https://www.apkmirror.com/apk/dynalist-inc/obsidian/variant-{"arches_slug":["arm64-v8a","armeabi-v7a","x86","x86_64"]}/feed';
+
+    let feed = await parser.parseURL(feedUrl);
+
+    if (feed.items.length > 0) {
+        return feed.items[0].link;
+    } else {
+        console.error('No items found in feed');
+        return null;
+    }
 }
 
 // Set download folder
@@ -48,10 +70,14 @@ const firefoxOptions = new firefox.Options()
 
     try {
         console.log('Opening the download page...');
-        await driver.get('https://www.apkmirror.com/apk/dynalist-inc/obsidian/variant-{"arches_slug":["arm64-v8a","armeabi-v7a","x86","x86_64"]}/')
 
-        let button = await driver.findElement(By.className('downloadLink'));
-        await button.click();
+        let link = await fetchLatestDownloadLink();
+        if (!link) {
+            console.error('No download link found in feed');
+            return;
+        }
+
+        await driver.get(link);
 
         let relativeUrl = await driver.findElement(By.className('downloadButton')).getAttribute('href');
 
@@ -79,6 +105,7 @@ const firefoxOptions = new firefox.Options()
             },
             (err) => {
                 console.log(`Download failed: ${err}`);
+                throw new Error('Download failed');
             }
         );
     } catch (err) {
@@ -87,12 +114,13 @@ const firefoxOptions = new firefox.Options()
         await driver.takeScreenshot().then((img) => {
             fs.writeFileSync('ss.png', img, 'base64')
         })
+        await driver.quit();
         // exit with code 1
         process.exit(1);
-        // await driver.quit();
     } finally {
         console.log('Done.');
-        await delay(5000);
-        // await driver.quit();
+        await driver.quit();
+        // exit with code 0
+        process.exit(0);
     }
 })();

@@ -44,16 +44,20 @@ jobs:
 
       - name: Run the download script
         # run the script, if it fails then upload the screenshot to the artifacts and fail the build
-        run: node selenium-dl.js || echo "SCRAPE_RESULT=$?" >> $GITHUB_ENV
+        # if a command fails, the rest of the code wont be executed, thats why we need to capture the error code in the same line
+        run: |
+          echo "SCRAPE_RESULT=0" >> $GITHUB_ENV
+          node selenium-dl.js || echo "SCRAPE_RESULT=$?" >> $GITHUB_ENV
 
       - name: upload screenshot
-        if: ${{ env.SCRAPE_RESULT }} != 0
+        if: ${{ env.SCRAPE_RESULT != 0 }}
         uses: actions/upload-artifact@v2
         with:
+          name: screenshot
           path: ./ss.png
 
       - name: fail if download failed
-        if: ${{ env.SCRAPE_RESULT }} != 0
+        if: ${{ env.SCRAPE_RESULT != 0 }}
         run: false
 
       - name: stop docker
