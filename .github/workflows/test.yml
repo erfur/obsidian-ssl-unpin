@@ -67,6 +67,15 @@ jobs:
           echo "APK_VERSION=$(echo $APK_NAME | awk -F'_' '{print $2}')" >> $GITHUB_ENV
           NEW_APK_NAME=`echo $APK_NAME | awk -F'_' '{print $1 "-" $2}'`
           echo "NEW_APK_NAME=$NEW_APK_NAME" >> $GITHUB_ENV
+
+      - name: check if apk is already released
+        run: |
+          echo "SHOULD_RELEASE=false" >> $GITHUB_ENV
+          gh release view -R ${{ github.repository_owner }}/${{ github.event.repository.name }} ${{ env.APK_VERSION }} || echo "SHOULD_RELEASE=true" >> $GITHUB_ENV
+        env:
+          GH_TOKEN: ${{ secrets.GH_RELEASE_TOKEN }}
+          OWNER: ${{ github.repository_owner }}
+          REPO: ${{ github.event.repository.name }}
           
       - name: rename apk to something simple
         run: mv ./headless-browser/out/*.apk obsidian.apk
