@@ -114,12 +114,12 @@ const firefoxOptions = new firefox.Options()
         await driver.takeScreenshot().then((img) => {
             fs.writeFileSync('ss.png', img, 'base64')
         })
-        await driver.quit();
+        // await driver.quit();
         // exit with code 1
         process.exit(1);
     } finally {
         console.log('Done.');
-        await driver.quit();
+        // await driver.quit();
         // exit with code 0
         process.exit(0);
     }
