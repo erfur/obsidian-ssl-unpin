@@ -135,7 +135,7 @@ jobs:
         run: |
           ./apktool b ./obsidian
 
-      - uses: kevin-david/zipalign-sign-android-release@v1.1.1
+      - uses: kevin-david/zipalign-sign-android-release@v2.0.1 
         name: Sign app APK
         # ID used to access action output
         id: sign_app
