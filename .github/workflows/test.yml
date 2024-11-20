@@ -59,10 +59,30 @@ jobs:
       - name: stop docker
         run: docker compose -f headless-browser/docker-compose.yml down
 
+      - name: install apktool
+        run: |
+          wget https://bitbucket.org/iBotPeaches/apktool/downloads/apktool_2.10.0.jar -O apktool.jar
+          wget https://raw.githubusercontent.com/iBotPeaches/Apktool/master/scripts/linux/apktool -O apktool
+          chmod +x apktool
+
+      - name: process apkm files
+        id: process_apkm
+        run: |
+          APKM_NAME=$(ls -q ./headless-browser/out/*.apkm)
+          # if apkm file is found, then extract it
+          if [ -n "$APKM_NAME" ]; then
+            pip3 install -r requirements.txt
+            export PATH=$PATH:$(pwd)
+            python apkm.py $APKM_NAME
+          fi
+
+      # - name: Setup tmate session
+      #   uses: mxschmitt/action-tmate@v3
+
       - name: parse and save file name
         id: file_name
         run: |
-          APK_NAME=$(basename -s .apk ./headless-browser/out/*.apk)
+          APK_NAME=$(basename -s .apk ./headless-browser/out/md.obsidian_*.apk)
           echo "APK_NAME=$APK_NAME" >> $GITHUB_ENV
           echo "APK_VERSION=$(echo $APK_NAME | awk -F'_' '{print $2}')" >> $GITHUB_ENV
           NEW_APK_NAME=`echo $APK_NAME | awk -F'_' '{print $1 "-" $2}'`
@@ -78,16 +98,7 @@ jobs:
           REPO: ${{ github.event.repository.name }}
           
       - name: rename apk to something simple
-        run: mv ./headless-browser/out/*.apk obsidian.apk
-
-      - name: download apktool
-        run: |
-          wget https://bitbucket.org/iBotPeaches/apktool/downloads/apktool_2.9.3.jar -O apktool.jar
-          wget https://raw.githubusercontent.com/iBotPeaches/Apktool/master/scripts/linux/apktool -O apktool
-          chmod +x apktool
-
-      # - name: Setup tmate session
-      #   uses: mxschmitt/action-tmate@v3
+        run: mv ./headless-browser/out/md.obsidian_*.apk obsidian.apk
 
       - name: unpack the apk
         run: |

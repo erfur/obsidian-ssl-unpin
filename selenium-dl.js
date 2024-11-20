@@ -14,7 +14,7 @@ function checkFileDownloadedWithTimeout(folderPath, timeout) {
             watcher.close();
             // check for the existence of the file one last time
             fs.readdirSync(folderPath).forEach(file => {
-                if (file.startsWith('md.obsidian') && file.endsWith('.apk')) {
+                if (file.startsWith('md.obsidian')) {
                     resolve(file);
                 }
             });
@@ -23,7 +23,7 @@ function checkFileDownloadedWithTimeout(folderPath, timeout) {
 
         var watcher = fs.watch(folderPath, function (eventType, filename) {
             console.log(`Event: ${eventType}, Filename: ${filename}`);
-            if (eventType === 'rename' && filename.startsWith('md.obsidian') && filename.endsWith('.apk')) {
+            if (eventType === 'rename' && filename.startsWith('md.obsidian')) {
                 clearTimeout(timer);
                 watcher.close();
                 resolve(filename);
