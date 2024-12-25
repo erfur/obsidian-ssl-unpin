@@ -150,6 +150,8 @@ jobs:
         name: Sign app APK
         # ID used to access action output
         id: sign_app
+        env:
+          BUILD_TOOLS_VERSION: 35.0.0
         with:
           releaseDirectory: ./obsidian/dist/
           signingKeyBase64: ${{ secrets.SIGNING_KEY }}
